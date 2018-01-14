@@ -9,6 +9,8 @@
     <RootNamespace>VVVV.Nodes.DirectWrite</RootNamespace>
     <AssemblyName>VVVV.Nodes.DirectWrite</AssemblyName>
     <OutputPath>$(OutputPath)\nodes\plugins\directwrite</OutputPath>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="SharpDX">

@@ -9,6 +9,8 @@
     <RootNamespace>VVVV.DX11.Nodes.QrCode</RootNamespace>
     <AssemblyName>VVVV.DX11.Nodes.QrCode</AssemblyName>
     <OutputPath>$(OutputPath)\nodes\plugins\qrcode</OutputPath>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Gma.QrCodeNet.Encoding">

@@ -35,7 +35,7 @@ namespace VVVV.DX11.Nodes
 {
     [PluginInfo(Name="Renderer",Category="DX11",Author="vux,tonfilm",AutoEvaluate=true,
         InitialWindowHeight=300,InitialWindowWidth=400,InitialBoxWidth=400,InitialBoxHeight=300, InitialComponentMode=TComponentMode.InAWindow)]
-    public partial class DX11RendererNode : IPluginEvaluate, IDisposable, IDX11RendererHost, IDX11RenderWindow, IDX11Queryable, IUserInputWindow, IBackgroundColor, IPartImportsSatisfiedNotification
+    public partial class DX11RendererNode : IPluginEvaluate, IDisposable, IDX11RendererHost, IDX11RenderWindow, IDX11Queryable, IUserInputWindow, IBackgroundColor, IPartImportsSatisfiedNotification, IProjectionSpace, IPluginFeedbackLoop
     {
         #region Touch Stuff
         private object m_touchlock = new object();
@@ -233,19 +233,23 @@ namespace VVVV.DX11.Nodes
         #endregion
 
         #region Output Pins
-        [Output("Mouse State",AllowFeedback=true)]
+        const string MouseStatePinName = "Mouse State";
+        [Output(MouseStatePinName)]
         protected ISpread<MouseState> FOutMouseState;
 
-        [Output("Keyboard State", AllowFeedback = true)]
+        const string KeyboardStatePinName = "Keyboard State";
+        [Output(KeyboardStatePinName)]
         protected ISpread<KeyboardState> FOutKState;
 
         [Output("Touch Supported",IsSingle=true)]
         protected ISpread<bool> FOutTouchSupport;
 
-        [Output("Touch Data", AllowFeedback = true)]
+        const string TouchDataPinName = "Touch Data";
+        [Output(TouchDataPinName)]
         protected ISpread<TouchData> FOutTouchData;
 
-        [Output("Actual BackBuffer Size", AllowFeedback = true)]
+        const string BackBufferSizePinName = "Actual BackBuffer Size";
+        [Output(BackBufferSizePinName)]
         protected ISpread<Vector2D> FOutBackBufferSize;
 
         [Output("Texture Out")]
@@ -259,7 +263,8 @@ namespace VVVV.DX11.Nodes
         [Output("Query", Order = 200, IsSingle = true)]
         protected ISpread<IDX11Queryable> FOutQueryable;
 
-        [Output("Control", Order = 201, IsSingle = true, Visibility = PinVisibility.OnlyInspector, AllowFeedback =true)]
+        const string ControlPinName = "Control";
+        [Output(ControlPinName, Order = 201, IsSingle = true, Visibility = PinVisibility.OnlyInspector)]
         protected ISpread<Control> FOutCtrl;
 
         [Output("Node Ref", Order = 201, IsSingle = true, Visibility = PinVisibility.OnlyInspector)]
@@ -370,6 +375,22 @@ namespace VVVV.DX11.Nodes
                     tcnt++;
                 }
             }
+
+            this.FViewports.Clear();
+            int rtmax = Math.Max(this.FInProjection.SliceCount, this.FInView.SliceCount);
+            rtmax = Math.Max(rtmax, this.FInViewPort.SliceCount);
+            float cw = (float)this.ClientSize.Width;
+            float ch = (float)this.ClientSize.Height;
+            var stdVP = new Viewport(0, 0, cw, ch);
+            var customVP = this.FInViewPort.IsConnected;
+            for (int i = 0; i < rtmax; i++)
+            {
+                var vp = customVP
+                    ? this.FInViewPort[i].Normalize(cw, ch)
+                    : stdVP;
+                FViewports.Add(new DX11Viewport(vp, this.FInAspect[i], this.FInCrop[i]));
+            }
+
             FirstFrame = false;
         }
         #endregion
@@ -677,6 +698,33 @@ namespace VVVV.DX11.Nodes
         {
             this.FOutCtrl[0] = this;
             this.FOutRef[0] = (INode)this.FHost;
+        }
+
+        List<DX11Viewport> FViewports = new List<DX11Viewport>();
+
+        public void MapFromPixels(Point inPixels, out Vector2D inNormalizedProjection, out Vector2D inProjection)
+        {
+            foreach (var vp in FViewports)
+            {
+                if (vp.MapFromPixels(inPixels, out inNormalizedProjection, out inProjection))
+                    return;
+            }
+
+            inNormalizedProjection = Vector2D.Zero;
+            inProjection = Vector2D.Zero;
+        }
+
+        public bool OutputRequiresInputEvaluation(IPluginIO inputPin, IPluginIO outputPin)
+        {
+            var name = outputPin.Name;
+            var allowFeedBack =
+                name == MouseStatePinName
+                || name == KeyboardStatePinName
+                || name == TouchDataPinName
+                || name == ControlPinName
+                || name == BackBufferSizePinName;
+
+            return !allowFeedBack;
         }
     }
 }

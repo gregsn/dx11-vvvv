@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(SolutionDir)\vvvv.DX11.Build.targets" />
   <Import Project="$(SolutionDir)\vvvv.DX11.CoreImport.targets" />
   <PropertyGroup>
@@ -11,6 +11,8 @@
     <RootNamespace>VVVV.DX11.Nodes</RootNamespace>
     <AssemblyName>VVVV.DX11.Nodes</AssemblyName>
     <OutputPath>$(OutputPath)\nodes\plugins\base</OutputPath>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -73,6 +75,7 @@
     <Compile Include="Nodes\Renderers\Graphics\DX11Texture1dArrayRendererNode.cs" />
     <Compile Include="Nodes\Renderers\Graphics\DX11Texture1dRendererNode.cs" />
     <Compile Include="Nodes\Renderers\Graphics\Touch\TouchStateJoin.cs" />
+    <Compile Include="Nodes\Renderers\Graphics\DX11Viewport.cs" />
     <Compile Include="Nodes\RenderStates\Advanced\DX11TagNode.cs" />
     <Compile Include="Nodes\RenderStates\Advanced\DX11StencilReferenceStateNode.cs" />
     <Compile Include="Nodes\RenderStates\Advanced\DX11BlendFactorStateNode.cs" />

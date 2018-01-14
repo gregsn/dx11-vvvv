@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(SolutionDir)\vvvv.DX11.Build.targets" />
   <PropertyGroup>
     <ProjectGuid>{6A0AFB1F-8219-4A08-85F7-B7F19B66AC16}</ProjectGuid>
@@ -10,6 +10,7 @@
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
     <OutputPath>$(OutputPath)\nodes\plugins\dshow\</OutputPath>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -45,10 +46,8 @@
     <Compile Include="VideoIn.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
-  
   <Target Name="AfterBuild">
     <Copy SourceFiles="Dependencies\VVVV.AForge.Video.DirectShow.dll" DestinationFolder="$(OutputPath)" />
     <Copy SourceFiles="Dependencies\VVVV.AForge.Video.dll" DestinationFolder="$(OutputPath)" />
   </Target>
-
 </Project>

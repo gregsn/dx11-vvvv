@@ -16,7 +16,7 @@ namespace VVVV.DX11.Nodes
         AutoEvaluate=true,      
         Author = "vux",
         Warnings="Doesn't suppport multicontext, experimental,non spreadable")]
-    public class FrameDelayTextureNode : IPluginEvaluate, IDX11ResourceHost, IDisposable
+    public class FrameDelayTextureNode : IPluginEvaluate, IDX11ResourceHost, IDisposable, IPluginFeedbackLoop
     {
         [Input("Texture In", IsSingle = true)]
         protected Pin<DX11Resource<DX11Texture2D>> FTextureInput;
@@ -24,7 +24,8 @@ namespace VVVV.DX11.Nodes
         [Input("Flush", IsSingle = true)]
         protected ISpread<bool> FInFlush;
 
-        [Output("Texture Out", IsSingle = true, AllowFeedback=true)]
+        const string TextureOutPinName = "Texture Out";
+        [Output(TextureOutPinName, IsSingle = true)]
         protected Pin<DX11Resource<DX11Texture2D>> FTextureOutput;
 
         private IHDEHost hde;
@@ -116,6 +117,11 @@ namespace VVVV.DX11.Nodes
         public void Dispose()
         {
             this.hde.MainLoop.OnResetCache -= this.MainLoop_OnPresent;
+        }
+
+        public bool OutputRequiresInputEvaluation(IPluginIO inputPin, IPluginIO outputPin)
+        {
+            return outputPin.Name != TextureOutPinName;
         }
     }
 }
